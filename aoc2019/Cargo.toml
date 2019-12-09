@@ -1,0 +1,16 @@
+[package]
+name = "aoc2019"
+version = "0.1.0"
+authors = ["stefan"]
+edition = "2018"
+
+[dependencies]
+atoi = "0.3"
+structopt = "0.3"
+
+[dev-dependencies]
+criterion = "0.3"
+
+#[[bench]]
+#name = "benchmarks"
+#harness = false
