@@ -2,46 +2,31 @@ use std::io;
 
 use crate::error::Error;
 
-pub fn run<R>(mut input: R) -> Result<(), Error>
+pub fn run<R>(input: R) -> Result<(), Error>
 where
     R: io::BufRead,
 {
-    let mut content = Vec::new();
-    input.read_to_end(&mut content)?;
-
-    // part 1
-    let mut reader = io::BufReader::new(&content[..]);
-    run_part(&mut reader, part_one)?;
-
-    // part 2
-    let mut reader = io::BufReader::new(&content[..]);
-    run_part(&mut reader, part_two)?;
-
+    let (answer1, answer2) = run2(input)?;
+    println!("{}", answer1);
+    println!("{}", answer2);
     Ok(())
 }
 
-pub fn run_part<F, R>(input: &mut R, func: F) -> Result<(), Error>
+pub fn run2<R>(input: R) -> Result<(usize, usize), Error>
 where
     R: io::BufRead,
-    F: Fn(usize) -> usize,
 {
-    let mut buffer = String::new();
-    let mut total = 0;
+    let mut total1 = 0;
+    let mut total2 = 0;
 
-    loop {
-        if input.read_line(&mut buffer)? == 0 {
-            break;
-        }
-        let n = buffer.trim().parse::<usize>()?;
-        let fuel = func(n);
-        total += fuel;
-
-        buffer.clear();
+    for res in input.lines() {
+        let line = res?;
+        let n = line.trim().parse::<usize>()?;
+        total1 += part_one(n);
+        total2 += part_two(n);
     }
 
-    println!("{}", total);
-
-    Ok(())
+    Ok((total1, total2))
 }
 
 fn part_one(n: usize) -> usize {
@@ -62,7 +47,6 @@ fn part_two(mut n: usize) -> usize {
         n = m;
     }
 }
-/*
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -71,17 +55,17 @@ mod tests {
     fn test_01() {
         let test_cases = &[
             // input, expected1, expected2
-            ("12", "2", "2"),
-            ("14", "2", "2"),
-            ("1969", "654", "966"),
-            ("100756", "33583", "50346"),
+            ("12", 2, 2),
+            ("14", 2, 2),
+            ("1969", 654, 966),
+            ("100756", 33583, 50346),
         ];
 
         for (input, expected1, expected2) in test_cases {
             let reader = io::BufReader::new(input.as_bytes());
-            let (actual1, actual2) = run(reader).unwrap();
+            let (actual1, actual2) = run2(reader).unwrap();
             assert_eq!(*expected1, actual1);
             assert_eq!(*expected2, actual2);
         }
     }
-}*/
+}
